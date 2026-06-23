@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Smart_Health_Monitor">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -19,10 +20,20 @@
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".data.WearListenerService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+                <data android:scheme="wear"
+                    android:host="*"
+                    android:pathPrefix="/smarthealthmonitor" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>
