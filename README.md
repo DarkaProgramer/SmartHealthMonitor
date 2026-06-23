@@ -1,7 +1,7 @@
 # SmartHealth Monitor
 
 Aplicación Android multiplataforma para monitoreo de salud personal.
-Desarrollada como proyecto integrador en UTNG — 9° Cuatrimestre 2025.
+Desarrollada como proyecto integrador en UTNG — 9° Cuatrimestre 2026.
 
 ## Stack tecnológico
 - Kotlin + Jetpack Compose
