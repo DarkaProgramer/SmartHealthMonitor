@@ -1,0 +1,24 @@
+package mx.utng.smart_health_monitor.ui.viewmodel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.*
+import mx.utng.smart_health_monitor.data.SmartHealthRepository
+
+class DashboardViewModel : ViewModel() {
+    val fc: StateFlow<Int> = SmartHealthRepository.fcFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = 72
+        )
+
+    val pasos: StateFlow<Int> = SmartHealthRepository.pasosFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = 4250
+        )
+
+    val historial = SmartHealthRepository.historialFC
+}

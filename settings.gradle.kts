@@ -11,10 +11,6 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-    id("com.google.devtools.ksp") version "2.0.21-1.0.27" apply false
-}
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -25,4 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Smart_Health_Monitor"
 include(":app")
- 
