@@ -6,6 +6,7 @@ import mx.utng.smart_health_monitor.data.SmartHealthRepository
 class SmartHealthApp : Application() {
     override fun onCreate() {
         super.onCreate()
+        // Inicializar el repositorio con Room
         SmartHealthRepository.init(this)
     }
 }
