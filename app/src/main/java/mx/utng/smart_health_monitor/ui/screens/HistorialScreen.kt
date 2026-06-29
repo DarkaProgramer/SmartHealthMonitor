@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import mx.utng.smart_health_monitor.data.db.LecturaFC
 import mx.utng.smart_health_monitor.ui.viewmodel.DashboardViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,6 +44,7 @@ fun HistorialScreen(
         }
     ) { paddingValues ->
         if (lecturas.isEmpty()) {
+            // Estado vacío
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -58,9 +60,12 @@ fun HistorialScreen(
             }
         } else {
             LazyColumn(
-                modifier = Modifier.padding(paddingValues),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
                 contentPadding = PaddingValues(vertical = 8.dp)
             ) {
+                // Contador de lecturas
                 item {
                     Text(
                         text = "${lecturas.size} lecturas registradas",
@@ -69,6 +74,8 @@ fun HistorialScreen(
                         modifier = Modifier.padding(16.dp)
                     )
                 }
+
+                // Lista de lecturas
                 items(lecturas, key = { it.id }) { lectura ->
                     FilaHistorial(lectura = lectura)
                 }
