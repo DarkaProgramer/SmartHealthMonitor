@@ -3,90 +3,115 @@ package mx.utng.smart_health_monitor.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import mx.utng.smart_health_monitor.data.SmartHealthRepository
 import mx.utng.smart_health_monitor.ui.viewmodel.DashboardViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen(
-    onHistorialClick: () -> Unit = {},
-    onAlertClick: () -> Unit = {},
+fun HistorialScreen(
+    onBack: () -> Unit,
     viewModel: DashboardViewModel = viewModel()
 ) {
-    val fc by viewModel.fc.collectAsState()
-    val pasos by viewModel.pasos.collectAsState()
-    val historial by viewModel.historial.collectAsState()
+    val lecturas by viewModel.historial.collectAsState()
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("SmartHealth Monitor") })
+            TopAppBar(
+                title = { Text("Historial de FC") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Regresar"
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
         }
-    ) { innerPadding ->
-        LazyColumn(
+    ) { paddingValues ->
+        if (lecturas.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "No hay lecturas aún.\nEspera a que el reloj envíe datos.",
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.padding(paddingValues),
+                contentPadding = PaddingValues(vertical = 8.dp)
+            ) {
+                item {
+                    Text(
+                        text = "${lecturas.size} lecturas registradas",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+                items(lecturas, key = { it.id }) { lectura ->
+                    FilaHistorial(lectura = lectura)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun FilaHistorial(lectura: LecturaFC) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (lectura.esNormal)
+                MaterialTheme.colorScheme.surfaceVariant
+            else
+                MaterialTheme.colorScheme.errorContainer
+        )
+    ) {
+        Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+                .fillMaxWidth()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            item {
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = "Frecuencia Cardíaca", style = MaterialTheme.typography.titleMedium)
-                        Text(text = "$fc BPM", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.primary)
-                    }
-                }
-            }
-
-            item {
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = "Pasos Diarios", style = MaterialTheme.typography.titleMedium)
-                        Text(text = "$pasos pasos", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.secondary)
-                    }
-                }
-            }
-
-            item {
-                Text(text = "Historial Reciente", style = MaterialTheme.typography.titleMedium)
-            }
-
-            items(historial) { lectura ->
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-                ) {
-                    Row(
-                        modifier = Modifier.padding(12.dp).fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text("Lectura: ${lectura.valorBpm} BPM")
-                        Text(lectura.hora)
-                    }
-                }
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = {
-                        val fcSimulado = (60..110).random()
-                        val pasosSimulados = (3000..8000).random()
-                        SmartHealthRepository.actualizarFC(fcSimulado)
-                        SmartHealthRepository.actualizarPasos(pasosSimulados)
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
-                ) {
-                    Text("Simular dato del wearable (DEBUG)")
-                }
-            }
+            Text(
+                text = "${lectura.valorBpm} BPM",
+                color = if (lectura.esNormal)
+                    MaterialTheme.colorScheme.onSurface
+                else
+                    MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = lectura.hora,
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (lectura.esNormal)
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                else
+                    MaterialTheme.colorScheme.error
+            )
         }
     }
 }
