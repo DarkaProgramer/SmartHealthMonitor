@@ -6,13 +6,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import mx.utng.smart_health_monitor.data.db.LecturaFC
+import mx.utng.smart_health_monitor.data.db.LecturaFC  // ← Import desde data/db
 import mx.utng.smart_health_monitor.ui.viewmodel.DashboardViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,7 +46,6 @@ fun HistorialScreen(
         }
     ) { paddingValues ->
         if (lecturas.isEmpty()) {
-            // Estado vacío
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -60,12 +61,9 @@ fun HistorialScreen(
             }
         } else {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
+                modifier = Modifier.padding(paddingValues),
                 contentPadding = PaddingValues(vertical = 8.dp)
             ) {
-                // Contador de lecturas
                 item {
                     Text(
                         text = "${lecturas.size} lecturas registradas",
@@ -74,10 +72,8 @@ fun HistorialScreen(
                         modifier = Modifier.padding(16.dp)
                     )
                 }
-
-                // Lista de lecturas
                 items(lecturas, key = { it.id }) { lectura ->
-                    FilaHistorial(lectura = lectura)
+                    FilaHistorialItem(lectura = lectura)
                 }
             }
         }
@@ -85,7 +81,7 @@ fun HistorialScreen(
 }
 
 @Composable
-fun FilaHistorial(lectura: LecturaFC) {
+fun FilaHistorialItem(lectura: LecturaFC) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

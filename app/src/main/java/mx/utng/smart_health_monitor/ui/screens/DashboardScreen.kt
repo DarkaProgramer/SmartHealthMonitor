@@ -4,114 +4,156 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import mx.utng.smart_health_monitor.data.db.LecturaFC  // ← Import desde data/db
+import mx.utng.smart_health_monitor.data.models.MockData
+import mx.utng.smart_health_monitor.ui.components.TarjetaDato
+import mx.utng.smart_health_monitor.ui.theme.Smart_Health_MonitorTheme
 import mx.utng.smart_health_monitor.ui.viewmodel.DashboardViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistorialScreen(
-    onBack: () -> Unit,
+fun DashboardScreen(
+    onHistorialClick: () -> Unit = {},
+    onAlertClick: () -> Unit = {},
     viewModel: DashboardViewModel = viewModel()
 ) {
-    val lecturas by viewModel.historial.collectAsState()
+    val fc by viewModel.fc.collectAsState()
+    val pasos by viewModel.pasos.collectAsState()
+    val historial by viewModel.historial.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Historial de FC") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Regresar"
+    Smart_Health_MonitorTheme {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = "SmartHealth",
+                            style = MaterialTheme.typography.titleLarge
                         )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary
+                    )
                 )
-            )
-        }
-    ) { paddingValues ->
-        if (lecturas.isEmpty()) {
-            Box(
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = onAlertClick,
+                    containerColor = MaterialTheme.colorScheme.error
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Warning,
+                        contentDescription = "Enviar alerta de emergencia",
+                        tint = MaterialTheme.colorScheme.onError
+                    )
+                }
+            }
+        ) { paddingValues ->
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
-                contentAlignment = Alignment.Center
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(
-                    text = "No hay lecturas aún.\nEspera a que el reloj envíe datos.",
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.padding(paddingValues),
-                contentPadding = PaddingValues(vertical = 8.dp)
-            ) {
+                // ── Tarjeta FC ────────────────────────────
                 item {
-                    Text(
-                        text = "${lecturas.size} lecturas registradas",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(16.dp)
+                    TarjetaDato(
+                        valor = "$fc",
+                        unidad = "bpm",
+                        label = "Frecuencia cardíaca",
+                        colorValor = MaterialTheme.colorScheme.error
                     )
                 }
-                items(lecturas, key = { it.id }) { lectura ->
-                    FilaHistorial(lectura = lectura)
+
+                // ── Tarjeta Pasos ─────────────────────────
+                item {
+                    TarjetaDato(
+                        valor = "%,d".format(pasos),
+                        unidad = "pasos",
+                        label = "Pasos del día",
+                        colorValor = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                // ── Encabezado historial ──────────────────
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "Historial reciente",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        TextButton(onClick = onHistorialClick) {
+                            Text("Ver todo")
+                        }
+                    }
+                }
+
+                // ── Lista del historial ───────────────────
+                items(historial.take(5), key = { it.id }) { lectura ->
+                    FilaHistorialDashboard(lectura = lectura)
                 }
             }
         }
     }
 }
 
+// ─── Componente para cada fila del historial ──────────
 @Composable
-fun FilaHistorial(lectura: LecturaFC) {
-    Card(
-        modifier = Modifier
+fun FilaHistorialDashboard(
+    lectura: LecturaFC,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (lectura.esNormal)
-                MaterialTheme.colorScheme.surfaceVariant
-            else
-                MaterialTheme.colorScheme.errorContainer
-        )
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "${lectura.valorBpm} BPM",
-                color = if (lectura.esNormal)
-                    MaterialTheme.colorScheme.onSurface
-                else
-                    MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = lectura.hora,
-                style = MaterialTheme.typography.bodyMedium,
-                color = if (lectura.esNormal)
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                else
-                    MaterialTheme.colorScheme.error
-            )
-        }
+        Text(
+            text = "${lectura.valorBpm} bpm",
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+            color = if (lectura.esNormal)
+                MaterialTheme.colorScheme.onSurface
+            else
+                MaterialTheme.colorScheme.error
+        )
+        Text(
+            text = lectura.hora,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+}
+
+// ─── Previews ──────────────────────────────────────────
+@Preview(showBackground = true, name = "Dashboard - Light")
+@Preview(showBackground = true, name = "Dashboard - Dark",
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun DashboardScreenPreview() {
+    Smart_Health_MonitorTheme {
+        DashboardScreen(
+            onHistorialClick = {},
+            onAlertClick = {}
+        )
     }
 }
