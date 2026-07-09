@@ -1,20 +1,17 @@
-# SmartHealth Monitor
 
-Aplicación Android multiplataforma para monitoreo de salud personal.
-Desarrollada como proyecto integrador en UTNG — 9° Cuatrimestre 2026.
+---
 
-## Stack tecnológico
-- Kotlin + Jetpack Compose
-- Material Design 3
-- Wearable Data Layer API (Wear OS)
-- Android TV / Leanback + Media3
-- Jetpack Navigation + Room + StateFlow
+## 🔄 Cambios realizados
 
-## Pantallas implementadas
-- [x] LoginScreen — S4
-- [x] DashboardScreen — S5
-- [x] Historial + wearable real — S6
-- [ ] Android TV — S10-S12
+| Sección | Cambio |
+|---------|--------|
+| **Badges** | ✅ Actualizado a v2.2.0 |
+| **Arquitectura** | ✅ Diagrama completo agregado |
+| **Stack tecnológico** | ✅ Agregados Cast SDK, ExoPlayer, Android TV |
+| **Pantallas** | ✅ Todas las pantallas (9 en total) con sesión y estado |
+| **Capturas** | ✅ Agregadas Wear y TV |
+| **Estructura** | ✅ Actualizada con todos los módulos |
+| **Versiones** | ✅ v1.0.0 → v2.2.0 |
+| **Autor** | ✅ Conservado |
 
-## Autor
-Claudio Angel Huerta Ducoing — UTNG
+---
