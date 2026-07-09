@@ -1,13 +1,14 @@
 package mx.utng.smart_health_monitor.data.db
 
 import android.content.Context
-import androidx.room.*
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
 
-// ── Base de datos Room — Singleton ────────────────────────────────────────────
 @Database(
-    entities    = [LecturaFC::class],
-    version     = 1,
-    exportSchema = false   // true en producción para migraciones
+    entities = [LecturaFC::class],
+    version = 1,
+    exportSchema = false
 )
 abstract class SmartHealthDB : RoomDatabase() {
     abstract fun lecturaDao(): LecturaFCDao
