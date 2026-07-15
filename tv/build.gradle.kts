@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.21"
 }
 
 android {
@@ -54,19 +55,26 @@ dependencies {
     // Core KTX
     implementation("androidx.core:core-ktx:1.13.1")
 
-    // ✅ Navigation Compose para TV
+    // Navigation Compose para TV
     implementation("androidx.navigation:navigation-compose:2.8.9")
 
-    // ✅ Compose para TV
+    // Compose para TV
     implementation("androidx.compose.ui:ui:1.7.5")
     implementation("androidx.compose.ui:ui-tooling-preview:1.7.5")
     implementation("androidx.compose.material3:material3:1.3.1")
     implementation("androidx.activity:activity-compose:1.9.3")
 
-    // ✅ ExoPlayer
+    // ExoPlayer
     implementation("androidx.media3:media3-exoplayer:1.4.1")
     implementation("androidx.media3:media3-ui:1.4.1")
 
-    // ✅ Lifecycle Compose
+    // Lifecycle Compose
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
+
+    // ── ECLIPSE PAHO MQTT ────────────────────────────────────────────
+    implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
+    implementation("org.eclipse.paho:org.eclipse.paho.android.service:1.1.1")
+
+    // ── KOTLINX SERIALIZATION ───────────────────────────────────────
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 }
