@@ -10,19 +10,26 @@ import mx.utng.smart_health_monitor.wear.presentation.theme.SmartHealthWearTheme
 class WearMainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             SmartHealthWearTheme {
-                // TODO Ej.03: reemplazar con SmartHealthWearNavGraph
-                WearDashboardScreen()
+                WearApp()
             }
         }
     }
 }
 
+@Composable
+fun WearApp() {
+    // Usamos el ViewModel y la pantalla
+    val viewModel = WearViewModel(androidx.compose.ui.platform.LocalContext.current)
+    WearDashboardScreen(viewModel = viewModel)
+}
+
 @Preview(showBackground = true)
 @Composable
-fun WearMainActivityPreview() {
+fun WearAppPreview() {
     SmartHealthWearTheme {
-        WearDashboardScreen()
+        WearApp()
     }
 }
