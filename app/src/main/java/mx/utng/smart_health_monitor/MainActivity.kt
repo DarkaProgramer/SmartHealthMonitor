@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import mx.utng.smart_health_monitor.ui.screens.DashboardScreen
+import mx.utng.smart_health_monitor.navigation.NavGraph
 import mx.utng.smart_health_monitor.ui.theme.Smart_Health_MonitorTheme
 
 class MainActivity : ComponentActivity() {
@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Smart_Health_MonitorTheme {
-                DashboardScreen()
+                NavGraph()  // ← Usa NavGraph, no DashboardScreen
             }
         }
     }
@@ -23,8 +23,8 @@ class MainActivity : ComponentActivity() {
 
 @Preview(showBackground = true)
 @Composable
-fun DashboardScreenPreview() {
+fun AppPreview() {
     Smart_Health_MonitorTheme {
-        DashboardScreen()
+        NavGraph()
     }
 }
