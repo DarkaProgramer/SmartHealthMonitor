@@ -2,7 +2,6 @@ package mx.utng.smart_health_monitor
 
 import android.app.Application
 import android.util.Log
-import kotlinx.coroutines.flow.MutableStateFlow
 import mx.utng.smart_health_monitor.data.SmartHealthRepository
 import mx.utng.smart_health_monitor.data.sync.NeonSyncWorker
 import mx.utng.smart_health_monitor.mqtt.MqttAppService
@@ -29,7 +28,7 @@ class SmartHealthApp : Application() {
         // 3. Inicializar MQTT App Service
         mqttService = MqttAppService(
             context = this,
-            fcFlow = SmartHealthRepository.fcFlow as MutableStateFlow<Int>
+            fcFlow = SmartHealthRepository.fcFlow
         )
         mqttService.connect()
         Log.d("SmartHealthApp", "✅ MQTT App Service inicializado")
