@@ -21,3 +21,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Smart_Health_Monitor"
 include(":app")
+include(":wear")
+include(":tv")
+include(":tv:theme")
