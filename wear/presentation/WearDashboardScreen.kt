@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material.*
 import mx.utng.smart_health_monitor.wear.presentation.components.WearFCCard
@@ -11,7 +12,7 @@ import mx.utng.smart_health_monitor.wear.presentation.theme.SmartHealthWearTheme
 
 @Composable
 fun WearDashboardScreen(
-    viewModel: WearViewModel = WearViewModel(androidx.compose.ui.platform.LocalContext.current)
+    viewModel: WearViewModel = WearViewModel(LocalContext.current)
 ) {
     val state by viewModel.state.collectAsState()
     val listState = rememberScalingLazyListState()

@@ -17,6 +17,9 @@ class MqttWearPublisher(private val context: Context) {
     private var client: MqttAsyncClient? = null
     private val TAG = "MQTT_WEAR"
 
+    /**
+     * Conectar al broker MQTT
+     */
     suspend fun connect() = withContext(Dispatchers.IO) {
         try {
             client = MqttAsyncClient(
@@ -48,9 +51,12 @@ class MqttWearPublisher(private val context: Context) {
         }
     }
 
+    /**
+     * Publicar FC al topic MQTT
+     */
     fun publishFC(bpm: Int, estado: String) {
         if (client?.isConnected != true) {
-            Log.w(TAG, "⚠️ No conectado, reintentando...")
+            Log.w(TAG, "⚠️ No conectado, intentando reconectar...")
             return
         }
 
@@ -70,12 +76,20 @@ class MqttWearPublisher(private val context: Context) {
         }
     }
 
+    /**
+     * Desconectar del broker
+     */
     fun disconnect() {
         try {
             client?.disconnect()
-            Log.d(TAG, "Desconectado")
+            Log.d(TAG, "Desconectado del broker")
         } catch (e: Exception) {
             Log.e(TAG, "Error al desconectar: ${e.message}")
         }
     }
+
+    /**
+     * Verificar si está conectado
+     */
+    fun isConnected(): Boolean = client?.isConnected == true
 }

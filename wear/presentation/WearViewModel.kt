@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import mx.utng.smart_health_monitor.wear.mqtt.MqttWearPublisher
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class WearViewModel(
     private val context: Context
@@ -36,30 +39,25 @@ class WearViewModel(
         }
 
         // Simular cambios de FC cada 3 segundos (para pruebas)
-        // En producción, esto vendría del sensor Health Services
         viewModelScope.launch {
             var bpm = 72
             while (true) {
                 kotlinx.coroutines.delay(3000)
-                // Simular variación aleatoria entre 60-100
                 bpm = (60..100).random()
                 _fcActual.value = bpm
 
-                // Determinar estado
                 val estado = when {
                     bpm < 60 -> "FC Baja"
                     bpm > 100 -> "FC Alta"
                     else -> "Normal"
                 }
 
-                // Actualizar UI
+                val hora = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
+
                 _state.update { it.copy(
                     fcActual = bpm,
                     fcEstado = estado,
-                    ultimaActualizacion = java.text.SimpleDateFormat(
-                        "HH:mm:ss",
-                        java.util.Locale.getDefault()
-                    ).format(java.util.Date())
+                    ultimaActualizacion = hora
                 ) }
 
                 // Publicar FC vía MQTT
@@ -71,7 +69,6 @@ class WearViewModel(
 
     /**
      * Método para actualizar FC desde Health Services (Wear OS)
-     * Este método será llamado cuando el sensor envíe datos reales
      */
     fun updateFC(bpm: Int) {
         val estado = when {
@@ -80,17 +77,15 @@ class WearViewModel(
             else -> "Normal"
         }
 
+        val hora = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
+
         _fcActual.value = bpm
         _state.update { it.copy(
             fcActual = bpm,
             fcEstado = estado,
-            ultimaActualizacion = java.text.SimpleDateFormat(
-                "HH:mm:ss",
-                java.util.Locale.getDefault()
-            ).format(java.util.Date())
+            ultimaActualizacion = hora
         ) }
 
-        // Publicar FC vía MQTT
         mqttPublisher.publishFC(bpm, estado)
         Log.d(TAG, "📤 FC publicada desde sensor: $bpm bpm ($estado)")
     }
